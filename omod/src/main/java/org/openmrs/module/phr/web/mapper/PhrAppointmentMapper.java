@@ -58,7 +58,29 @@ public class PhrAppointmentMapper {
             appointment = appointmentsService.getAppointmentByUuid(appointmentPayload.getUuid());
         } else {
             appointment = new Appointment();
-            appointment.setPatient(patientService.getPatientByUuid(appointmentPayload.getPatientUuid()));
+            String[] names = getnames(appointmentPayload.getPatientUuid());
+            
+            if(names.length==1) {
+            	
+            	Patient patient = patientService.getPatientByUuid(appointmentPayload.getPatientUuid());
+            	AppointmentPatient appointmentPatient = phrAppointmentServiceService.getAppointmentPatientByUuid(appointmentPayload.getPatientUuid());
+            
+            	if(patient !=null) {
+            		
+            		appointment.setPatient(patient);
+            	
+            	}else if(appointmentPatient !=null) {
+            		
+            		appointment.setAppointmentPatient(phrAppointmentServiceService.getAppointmentPatientByUuid(appointmentPayload.getPatientUuid()));
+            	
+            	}else {
+            	
+            		appointment.setAppointmentPatient(phrAppointmentServiceService.createPatient(appointmentPayload.getPatientUuid()));
+            	}
+            }else {
+            
+            	appointment.setAppointmentPatient(phrAppointmentServiceService.createPatient(appointmentPayload.getPatientUuid()));
+            }
         }
         AppointmentService appointmentService = appointmentServiceService.getAppointmentServiceByUuid(appointmentPayload.getServiceUuid());
         AppointmentServiceType appointmentServiceType = null;
@@ -94,5 +116,10 @@ public class PhrAppointmentMapper {
     	return serviceType;
     	
     }
+   
+   String[] getnames(String name){
+		String[] names = name.split(" ");
+		return names;
+   }
 
 }

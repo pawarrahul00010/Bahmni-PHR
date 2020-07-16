@@ -3,6 +3,7 @@ package org.openmrs.module.phr.service.impl;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appointments.model.Appointment;
 import org.openmrs.module.appointments.model.AppointmentServiceType;
+import org.openmrs.module.appointments.model.AppointmentPatient;
 import org.openmrs.module.phr.dao.PhrAppointmentServiceDao;
 import org.openmrs.module.phr.service.PhrAppointmentServiceService;
 import org.openmrs.module.appointments.service.AppointmentsService;
@@ -50,7 +51,30 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
         return (appointment.getService() != null && appointment.getService().getVoided()) ||
                (appointment.getServiceType() != null && appointment.getServiceType().getVoided());
     }
-
     
+    @Override
+    public AppointmentPatient createPatient(String name) {
+    	AppointmentPatient patient = new AppointmentPatient();
+    	Map<String, String> nameMapping = getnames(name);
+    	patient.setFirstName(nameMapping.get("firstname"));
+    	patient.setLastName(nameMapping.get("lastname"));
+    	return phrAppointmentServiceDao.createPatient(patient);
+    }
 
+    Map<String, String> getnames(String name){
+    	Map<String, String> nameMap = new HashMap<String, String>();
+		String[] names = name.split(" ");
+		nameMap.put("firstname", names[0]);
+		nameMap.put("lastname", names[names.length-1]);
+		
+
+		return nameMap;
+    }
+
+    @Override
+    public AppointmentPatient getAppointmentPatientByUuid(String uuid) {
+    	
+    	AppointmentPatient appointmentPatient = phrAppointmentServiceDao.getAppointmentPatientByUuid(uuid);
+    	return appointmentPatient;	
+    }
 }

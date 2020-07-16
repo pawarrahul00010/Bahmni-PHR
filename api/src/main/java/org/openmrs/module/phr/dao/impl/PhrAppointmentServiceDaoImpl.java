@@ -8,6 +8,7 @@ import org.openmrs.module.phr.dao.PhrAppointmentServiceDao;
 import org.openmrs.module.appointments.model.AppointmentServiceType;
 import org.openmrs.module.appointments.model.Appointment;
 import org.openmrs.module.appointments.model.AppointmentService;
+import org.openmrs.module.appointments.model.AppointmentPatient;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -27,6 +28,14 @@ public class PhrAppointmentServiceDaoImpl implements PhrAppointmentServiceDao{
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AppointmentServiceType.class, "appointmentServiceType");
         criteria.add(Restrictions.eq("uuid", uuid));
         return (AppointmentServiceType) criteria.uniqueResult();
+    }
+    
+    @Override
+    public AppointmentPatient getAppointmentPatientByUuid(String uuid) {
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AppointmentPatient.class, "appointmentPatient");
+        criteria.add(Restrictions.eq("uuid", uuid));
+        return (AppointmentPatient) criteria.uniqueResult();
+
     }
     
     @Override
@@ -66,6 +75,12 @@ public class PhrAppointmentServiceDaoImpl implements PhrAppointmentServiceDao{
         }
         return criteria.list();
     }
-    
 
+    @Transactional
+    @Override
+    public AppointmentPatient createPatient(AppointmentPatient patient) {
+        Session currentSession = sessionFactory.getCurrentSession();
+        currentSession.saveOrUpdate(patient);
+        return patient;
+    }
 }

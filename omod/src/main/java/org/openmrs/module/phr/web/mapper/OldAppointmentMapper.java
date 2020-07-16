@@ -111,7 +111,14 @@ public class OldAppointmentMapper {
 	 private AppointmentDefaultResponse mapToDefaultResponse(Appointment a, AppointmentDefaultResponse response) {
 	    response.setUuid(a.getUuid());
 	    response.setAppointmentNumber(a.getAppointmentNumber());
-	    response.setPatient(createPatientMap(a.getPatient()));
+	    if(a.getPatient() != null) {
+	    	
+	    	response.setPatient(createPatientMap(a.getPatient()));
+	    }
+	    if(a.getAppointmentPatient() != null) {
+	    	
+	    	response.setPatient(createAppointmentPatientMap(a.getAppointmentPatient()));
+	    }
 	    response.setService(appointmentServiceMapper.constructDefaultResponse(a.getService()));
 	    response.setServiceType(createServiceTypeMap(a.getServiceType()));
 	    response.setProvider(createProviderMap(a.getProvider()));
@@ -164,6 +171,14 @@ public class OldAppointmentMapper {
         map.put("identifier", p.getPatientIdentifier().getIdentifier());
         return map;
     }
+    
+    private Map createAppointmentPatientMap(AppointmentPatient p) {
+        Map map = new HashMap();
+        map.put("name", p.getFirstName()+" "+p.getLastName());
+        map.put("uuid", p.getUuid());
+        return map;
+    }
+    
     
     AppointmentServiceType getServiceTypeByNameAndServiceId(int ServiceId){
     	

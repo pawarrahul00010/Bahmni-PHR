@@ -6,6 +6,7 @@ import org.openmrs.module.appointments.model.Appointment;
 import org.openmrs.module.appointments.model.AppointmentService;
 import org.openmrs.module.appointments.model.AppointmentServiceType;
 import org.springframework.transaction.annotation.Transactional;
+import org.openmrs.module.appointments.model.AppointmentPatient;
 
 import java.sql.Time;
 import java.util.Date;
@@ -31,5 +32,13 @@ public interface PhrAppointmentServiceService {
     @Transactional
     @Authorized({"View Appointment Services"})
     public List<Appointment> getAllAppointments(Date forDate);
+    
+    @Transactional
+    @Authorized({"View Appointment Services"})
+    public AppointmentPatient createPatient(String name);
+    
+    @Transactional
+    @Authorized({"View Appointment Services"})
+    public AppointmentPatient getAppointmentPatientByUuid(String uuid);
  }
 
