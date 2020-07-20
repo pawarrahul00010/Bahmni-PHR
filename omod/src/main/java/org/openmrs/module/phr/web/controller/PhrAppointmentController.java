@@ -79,6 +79,9 @@ public class PhrAppointmentController {
     @ResponseBody
     public List<AppointmentDefaultResponse> getAllAppointments(@RequestParam(value = "forDate", required = false) String forDate) throws ParseException {
         List<Appointment> appointments = phrAppointmentServiceService.getAllAppointments(DateUtil.convertToLocalDateFromUTC(forDate));
+        if(appointments == null){
+            throw new RuntimeException("Appointment does not exist");
+        }
         appointments = getAppointmentsByServiceTypeName(appointments,"Online Appointment"); 
 		 
         return appointmentMapper.constructResponse(appointments);
