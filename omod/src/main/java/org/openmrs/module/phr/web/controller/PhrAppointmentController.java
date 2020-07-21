@@ -76,6 +76,7 @@ public class PhrAppointmentController {
  
             Appointment appointment = phrappointmentMapper.getAppointmentFromPayload(appointmentPayload);
             appointmentsService.validateAndSave(appointment);
+            //String msg = "Dear user, the appointment in the name of [Patient's Name] on [date & Time] for the [Department] has been confirmed. If you need to cancel or reschedule, please call on [Phone number] or cancel the appointment via Bahmni PHR. Thanks";
             //sms.sendSms(String.valueOf(mobileNumber), "Your Registration is successful enter OTP to verify : "+OTP);
             //mail.String notify(email, subject, msg);
             return new ResponseEntity<>(appointmentMapper.constructResponse(appointment), HttpStatus.OK);
