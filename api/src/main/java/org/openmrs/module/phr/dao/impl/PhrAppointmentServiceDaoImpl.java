@@ -3,6 +3,7 @@ package org.openmrs.module.phr.dao.impl;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.phr.dao.PhrAppointmentServiceDao;
 import org.openmrs.module.appointments.model.AppointmentServiceType;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+
 
 public class PhrAppointmentServiceDaoImpl implements PhrAppointmentServiceDao{
 
@@ -68,12 +71,17 @@ public class PhrAppointmentServiceDaoImpl implements PhrAppointmentServiceDao{
     @Override
     public List<Appointment> getAllAppointments(Date forDate) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Appointment.class);
+        criteria.createAlias("appointmentPatient", "patient");
         criteria.add(Restrictions.eq("voided", false));
         if (forDate != null) {
             Date maxDate = new Date(forDate.getTime() + TimeUnit.DAYS.toMillis(1));
             criteria.add(Restrictions.ge("startDateTime", forDate));
-            criteria.add(Restrictions.eq("status", AppointmentStatus.Scheduled));
+            
         }
+        criteria.add(Restrictions.eq("status", AppointmentStatus.Scheduled));
+        criteria.addOrder(Order.asc("startDateTime"));
+        criteria.addOrder(Order.asc("patient.firstName"));
+        criteria.addOrder(Order.asc("patient.lastName"));
         return criteria.list();
     }
 
