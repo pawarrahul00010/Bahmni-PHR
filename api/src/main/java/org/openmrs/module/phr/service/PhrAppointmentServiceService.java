@@ -40,5 +40,10 @@ public interface PhrAppointmentServiceService {
     @Transactional
     @Authorized({"View Appointment Services"})
     public AppointmentPatient getAppointmentPatientByUuid(String uuid);
+
+    @Transactional
+    @Authorized({"View Appointment Services"})
+	void sendMsg(Appointment appointment);
+
  }
 

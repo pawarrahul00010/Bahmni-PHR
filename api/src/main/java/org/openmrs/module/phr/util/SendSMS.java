@@ -16,7 +16,7 @@ public class SendSMS {
 		try {
 			// Construct data
 			String apiKey = "apikey=" + "SPwzQH4INk0-AEo3VhF18WF9V5GKTNQeL37IPNtv4u";
-			String sender = "&sender=" + /* "TXTLCL" */ "PHR";
+			String sender = "&sender=" + /* "TXTLCL" */ "Bahmni PHR";
 			String message = "&message=" + txt;
 			String numbers = "&numbers=" + mobile;
 

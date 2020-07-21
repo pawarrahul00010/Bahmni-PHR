@@ -23,8 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.openmrs.module.phr.util.SendSMS;
-import org.openmrs.module.phr.util.SendMail;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
@@ -56,12 +54,6 @@ public class PhrAppointmentController {
     
     @Autowired
     private PhrAppointmentServiceMapper appointmentServiceMapper;
-    
-    @Autowired
-	private SendSMS sms;
-    
-    @Autowired
-	private SendSMS mail;
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -76,16 +68,15 @@ public class PhrAppointmentController {
  
             Appointment appointment = phrappointmentMapper.getAppointmentFromPayload(appointmentPayload);
             appointmentsService.validateAndSave(appointment);
-            //String msg = "Dear user, the appointment in the name of [Patient's Name] on [date & Time] for the [Department] has been confirmed. If you need to cancel or reschedule, please call on [Phone number] or cancel the appointment via Bahmni PHR. Thanks";
-            //sms.sendSms(String.valueOf(mobileNumber), "Your Registration is successful enter OTP to verify : "+OTP);
-            //mail.String notify(email, subject, msg);
+            phrAppointmentServiceService.sendMsg(appointment);
             return new ResponseEntity<>(appointmentMapper.constructResponse(appointment), HttpStatus.OK);
         }catch (RuntimeException e) {
             return new ResponseEntity<>(RestUtil.wrapErrorResponse(e, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "all")
+
+	@RequestMapping(method = RequestMethod.GET, value = "all")
     @ResponseBody
     public List<AppointmentDefaultResponse> getAllAppointments(@RequestParam(value = "forDate", required = false) String forDate) throws ParseException {
         List<Appointment> appointments = phrAppointmentServiceService.getAllAppointments(DateUtil.convertToLocalDateFromUTC(forDate));

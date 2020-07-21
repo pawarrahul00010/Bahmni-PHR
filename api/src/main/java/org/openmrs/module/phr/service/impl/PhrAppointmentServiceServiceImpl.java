@@ -1,16 +1,21 @@
 package org.openmrs.module.phr.service.impl;
 
 import org.openmrs.api.context.Context;
+import java.util.regex.Matcher; 
+import java.util.regex.Pattern; 
 import org.openmrs.module.appointments.model.Appointment;
 import org.openmrs.module.appointments.model.AppointmentServiceType;
 import org.openmrs.module.appointments.model.AppointmentPatient;
 import org.openmrs.module.phr.dao.PhrAppointmentServiceDao;
 import org.openmrs.module.phr.service.PhrAppointmentServiceService;
+import org.openmrs.module.phr.util.SendSMS;
 import org.openmrs.module.appointments.service.AppointmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.openmrs.module.phr.util.SendSMS;
+import org.openmrs.module.phr.util.SendMail;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,6 +24,12 @@ import java.util.stream.Collectors;
 public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceService {
 
     private PhrAppointmentServiceDao phrAppointmentServiceDao;
+    
+    @Autowired
+	private SendSMS sms;
+    
+    @Autowired
+	private SendMail mail;
     
 
     public void setPhrAppointmentServiceDao(PhrAppointmentServiceDao appointmentServiceDao) {
@@ -77,4 +88,57 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
     	AppointmentPatient appointmentPatient = phrAppointmentServiceDao.getAppointmentPatientByUuid(uuid);
     	return appointmentPatient;	
     }
+
+	@Override
+	public void sendMsg(Appointment appointment) {
+		
+        String email = "bahmniphr@gmail.com"; 
+        String msg = getMsg(appointment);
+        
+        if (isValid(email)) {
+        	String subject = "Bahmni PHR appointment";
+         
+        	mail.notify(email, subject, msg);
+        }
+        else { 
+        	//sms.sendSms(String.valueOf(mobileNumber), msg);
+        }
+	}
+	private String getMsg(Appointment a) {
+		
+	    String patientname = null;
+	    if(a.getPatient() != null) {
+	    	
+	    	patientname = a.getPatient().getPersonName().getFullName();
+	    }
+	    if(a.getAppointmentPatient() != null) {
+	    	
+	    	patientname = a.getAppointmentPatient().getFirstName()+" "+a.getAppointmentPatient().getLastName();
+	    }
+
+		if(a.getProvider()!=null)
+	    	return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
+			    		+"\n"+a.getStartDateTime()
+						+"\n"+a.getService().getName()
+						+"\n"+a.getProvider().getName();
+	    else
+	    	return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
+			    		+"\n"+a.getStartDateTime()
+						+"\n"+a.getService().getName();      
+		
+	}
+
+	public static boolean isValid(String email) 
+    { 
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+                            "[a-zA-Z0-9_+&*-]+)*@" + 
+                            "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+                            "A-Z]{2,7}$"; 
+                              
+        Pattern pat = Pattern.compile(emailRegex); 
+        if (email == null) 
+            return false; 
+        return pat.matcher(email).matches(); 
+    } 
+
 }
