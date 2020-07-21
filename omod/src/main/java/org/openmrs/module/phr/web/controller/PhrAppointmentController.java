@@ -23,7 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-org.openmrs.module.phr.util.SendSMS;
+import org.openmrs.module.phr.util.SendSMS;
+import org.openmrs.module.phr.util.SendMail;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
@@ -58,6 +59,9 @@ public class PhrAppointmentController {
     
     @Autowired
 	private SendSMS sms;
+    
+    @Autowired
+	private SendSMS mail;
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -73,6 +77,7 @@ public class PhrAppointmentController {
             Appointment appointment = phrappointmentMapper.getAppointmentFromPayload(appointmentPayload);
             appointmentsService.validateAndSave(appointment);
             //sms.sendSms(String.valueOf(mobileNumber), "Your Registration is successful enter OTP to verify : "+OTP);
+            //mail.String notify(email, subject, msg);
             return new ResponseEntity<>(appointmentMapper.constructResponse(appointment), HttpStatus.OK);
         }catch (RuntimeException e) {
             return new ResponseEntity<>(RestUtil.wrapErrorResponse(e, e.getMessage()), HttpStatus.BAD_REQUEST);
