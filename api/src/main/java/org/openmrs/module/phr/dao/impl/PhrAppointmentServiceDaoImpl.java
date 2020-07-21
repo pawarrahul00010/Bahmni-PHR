@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.openmrs.module.phr.dao.PhrAppointmentServiceDao;
 import org.openmrs.module.appointments.model.AppointmentServiceType;
+import org.openmrs.module.appointments.model.AppointmentStatus;
 import org.openmrs.module.appointments.model.Appointment;
 import org.openmrs.module.appointments.model.AppointmentService;
 import org.openmrs.module.appointments.model.AppointmentPatient;
@@ -71,7 +72,7 @@ public class PhrAppointmentServiceDaoImpl implements PhrAppointmentServiceDao{
         if (forDate != null) {
             Date maxDate = new Date(forDate.getTime() + TimeUnit.DAYS.toMillis(1));
             criteria.add(Restrictions.ge("startDateTime", forDate));
-           // criteria.add(Restrictions.lt("endDateTime", maxDate));
+            criteria.add(Restrictions.eq("status", AppointmentStatus.Scheduled));
         }
         return criteria.list();
     }
