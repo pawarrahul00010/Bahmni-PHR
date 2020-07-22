@@ -83,15 +83,9 @@ public class PhrAppointmentController {
         if(appointments == null){
             throw new RuntimeException("Appointment does not exist");
         }
-        appointments = getAppointmentsByServiceTypeName(appointments,"Online Appointment"); 
 		 
         return appointmentMapper.constructResponse(appointments);
     }  
-    
-    private List<Appointment> getAppointmentsByServiceTypeName(List<Appointment> appointments, String serviceType) {
-        return appointments.stream()
-                .filter(appointment -> appointment.getServiceType().getName().equals(serviceType))
-                .collect(Collectors.toList());
-    }
+
     
 }
