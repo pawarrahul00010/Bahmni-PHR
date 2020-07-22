@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.openmrs.module.phr.util.SendSMS;
 import org.openmrs.module.phr.util.SendMail;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 @Component
@@ -115,15 +117,16 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
 	    	
 	    	patientname = a.getAppointmentPatient().getFirstName()+" "+a.getAppointmentPatient().getLastName();
 	    }
+	    SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
 
 		if(a.getProvider()!=null)
 	    	return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
-			    		+"\n"+a.getStartDateTime()
+			    		+"\n"+format.format(a.getStartDateTime())
 						+"\n"+a.getService().getName()
 						+"\n"+a.getProvider().getName();
 	    else
 	    	return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
-			    		+"\n"+a.getStartDateTime()
+			    		+"\n"+format.format(a.getStartDateTime())
 						+"\n"+a.getService().getName();      
 		
 	}
