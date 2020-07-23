@@ -92,13 +92,15 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
     }
 
 	@Override
-	public void sendMsg(Appointment appointment) {
+	public void sendMsg(Appointment appointment, String flag) {
 		
         String email = "bahmniphr@gmail.com"; 
-        String msg = getMsg(appointment);
+        String msg = getMsg(appointment, flag);
+        
+        String subject = "Bahmni PHR appointment";
+        
         
         if (isValid(email)) {
-        	String subject = "Bahmni PHR appointment";
          
         	mail.notify(email, subject, msg);
         }
@@ -106,7 +108,7 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
         	//sms.sendSms(String.valueOf(mobileNumber), msg);
         }
 	}
-	private String getMsg(Appointment a) {
+	private String getMsg(Appointment a, String flag) {
 		
 	    String patientname = null;
 	    if(a.getPatient() != null) {
@@ -118,17 +120,30 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
 	    	patientname = a.getAppointmentPatient().getFirstName()+" "+a.getAppointmentPatient().getLastName();
 	    }
 	    SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+	    if(flag.equals("update")) {
+	    	
+	    	if(a.getProvider()!=null)
+	    		return "Dear "+patientname+", your appointment has been successfully uddated at Bahmni Hospital"
+	    		+"\n"+format.format(a.getStartDateTime())
+	    		+"\n"+a.getService().getName()
+	    		+"\n"+a.getProvider().getName();
+	    	else
+	    		return "Dear "+patientname+", your appointment has been successfully updated at Bahmni Hospital"
+	    		+"\n"+format.format(a.getStartDateTime())
+	    		+"\n"+a.getService().getName();      
+	    	
+	    }else {
+	    	if(a.getProvider()!=null)
+	    		return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
+	    		+"\n"+format.format(a.getStartDateTime())
+	    		+"\n"+a.getService().getName()
+	    		+"\n"+a.getProvider().getName();
+	    	else
+	    		return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
+	    		+"\n"+format.format(a.getStartDateTime())
+	    		+"\n"+a.getService().getName(); 
+	    }
 
-		if(a.getProvider()!=null)
-	    	return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
-			    		+"\n"+format.format(a.getStartDateTime())
-						+"\n"+a.getService().getName()
-						+"\n"+a.getProvider().getName();
-	    else
-	    	return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
-			    		+"\n"+format.format(a.getStartDateTime())
-						+"\n"+a.getService().getName();      
-		
 	}
 
 	public static boolean isValid(String email) 

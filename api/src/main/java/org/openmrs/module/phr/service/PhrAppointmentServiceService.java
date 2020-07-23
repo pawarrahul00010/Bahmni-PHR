@@ -43,7 +43,7 @@ public interface PhrAppointmentServiceService {
 
     @Transactional
     @Authorized({"View Appointment Services"})
-	void sendMsg(Appointment appointment);
+	void sendMsg(Appointment appointment, String flag);
 
  }
 
