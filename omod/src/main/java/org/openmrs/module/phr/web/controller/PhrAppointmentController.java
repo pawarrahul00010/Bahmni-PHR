@@ -67,8 +67,14 @@ public class PhrAppointmentController {
             }
  
             Appointment appointment = phrappointmentMapper.getAppointmentFromPayload(appointmentPayload);
+            String flag = "";
+            if(appointmentPayload.getUuid() != null) {
+            	flag = "update";
+            }else {
+            	flag = "create";
+            }
             appointmentsService.validateAndSave(appointment);
-            phrAppointmentServiceService.sendMsg(appointment);
+            phrAppointmentServiceService.sendMsg(appointment, flag);
             return new ResponseEntity<>(appointmentMapper.constructResponse(appointment), HttpStatus.OK);
         }catch (RuntimeException e) {
             return new ResponseEntity<>(RestUtil.wrapErrorResponse(e, e.getMessage()), HttpStatus.BAD_REQUEST);
