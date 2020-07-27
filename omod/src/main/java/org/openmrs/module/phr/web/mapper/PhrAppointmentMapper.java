@@ -28,98 +28,129 @@ import java.util.stream.Collectors;
 
 @Component
 public class PhrAppointmentMapper {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PhrAppointmentMapper.class);
-	
-    @Autowired
-    LocationService locationService;
 
-    @Autowired
-    ProviderService providerService;
+	@Autowired
+	LocationService locationService;
 
-    @Autowired
-    PatientService patientService;
+	@Autowired
+	ProviderService providerService;
 
-    @Autowired
-    AppointmentServiceService appointmentServiceService;
+	@Autowired
+	PatientService patientService;
 
-    @Autowired
-    PhrAppointmentServiceService phrAppointmentServiceService;
-    
-    @Autowired
-    AppointmentsService appointmentsService;
+	@Autowired
+	AppointmentServiceService appointmentServiceService;
 
-    @Autowired(required = false)
-    AppointmentResponseExtension appointmentResponseExtension;
+	@Autowired
+	PhrAppointmentServiceService phrAppointmentServiceService;
 
-    public Appointment getAppointmentFromPayload(AppointmentPayload appointmentPayload) {
-        Appointment appointment;
-        if (!StringUtils.isBlank(appointmentPayload.getUuid())) {
-            appointment = appointmentsService.getAppointmentByUuid(appointmentPayload.getUuid());
-        } else {
-            appointment = new Appointment();
-            String[] names = getnames(appointmentPayload.getPatientUuid());
-            
-            if(names.length==1) {
-            	
-            	Patient patient = patientService.getPatientByUuid(appointmentPayload.getPatientUuid());
-            	AppointmentPatient appointmentPatient = phrAppointmentServiceService.getAppointmentPatientByUuid(appointmentPayload.getPatientUuid());
-            
-            	if(patient !=null) {
-            		
-            		appointment.setPatient(patient);
-            	
-            	}else if(appointmentPatient !=null) {
-            		
-            		appointment.setAppointmentPatient(phrAppointmentServiceService.getAppointmentPatientByUuid(appointmentPayload.getPatientUuid()));
-            	
-            	}else {
-            	
-            		appointment.setAppointmentPatient(phrAppointmentServiceService.createPatient(appointmentPayload.getPatientUuid()));
-            	}
-            }else {
-            
-            	appointment.setAppointmentPatient(phrAppointmentServiceService.createPatient(appointmentPayload.getPatientUuid()));
-            }
-        }
-        AppointmentService appointmentService = appointmentServiceService.getAppointmentServiceByUuid(appointmentPayload.getServiceUuid());
-        AppointmentServiceType appointmentServiceType = null;
-        
-        appointmentServiceType = getServiceTypeByNameAndServiceId(appointmentService.getAppointmentServiceId());
-		
-        appointment.setServiceType(appointmentServiceType);
-        appointment.setService(appointmentService);
-        appointment.setProvider(providerService.getProviderByUuid(appointmentPayload.getProviderUuid()));
-        appointment.setLocation(locationService.getLocationByUuid(appointmentPayload.getLocationUuid()));
-        appointment.setStartDateTime(appointmentPayload.getStartDateTime());
-        appointment.setEndDateTime(appointmentPayload.getEndDateTime());
-        appointment.setAppointmentKind(AppointmentKind.valueOf(appointmentPayload.getAppointmentKind()));
-        appointment.setComments(appointmentPayload.getComments());
+	@Autowired
+	AppointmentsService appointmentsService;
 
-        return appointment;
-    }
+	@Autowired(required = false)
+	AppointmentResponseExtension appointmentResponseExtension;
 
-    private AppointmentServiceType getServiceTypeByUuid(Set<AppointmentServiceType> serviceTypes, String serviceTypeUuid) {
-        return serviceTypes.stream()
-                .filter(avb -> avb.getUuid().equals(serviceTypeUuid)).findAny().get();
-    }
-    
-    private AppointmentServiceType getServiceTypeByName(Set<AppointmentServiceType> serviceTypes, String serviceTypeUuid) {
-        return serviceTypes.stream()
-                .filter(avb -> avb.getName().equals("Online Appointment")).findAny().get();
-    }
-    
-   AppointmentServiceType getServiceTypeByNameAndServiceId(int ServiceId){
-    	
-    	AppointmentServiceType serviceType = phrAppointmentServiceService.getAppointmentServiceTypeByName(ServiceId, "Online Appointment");
-    	
-    	return serviceType;
-    	
-    }
-   
-   String[] getnames(String name){
+	public Appointment getAppointmentFromPayload(AppointmentPayload appointmentPayload) {
+		Appointment appointment;
+
+		if (!StringUtils.isBlank(appointmentPayload.getUuid())) {
+
+			appointment = appointmentsService.getAppointmentByUuid(appointmentPayload.getUuid());
+
+		} else {
+			appointment = new Appointment();
+		}
+
+		Patient patient = patientService.getPatientByUuid(appointmentPayload.getPatientUuid());
+		AppointmentPatient appointmentPatient = phrAppointmentServiceService
+				.getAppointmentPatientByUuid(appointmentPayload.getPatientUuid());
+
+		String[] names = getnames(appointmentPayload.getPatientUuid());
+
+		if (names.length == 1) {
+
+			if (patient != null) {
+
+				patient.getAttribute("phoneNumber").setValue(appointmentPayload.getMobileNumber());
+				patient = patientService.savePatient(patient);
+				appointment.setPatient(patient);
+
+			} else if (appointmentPatient != null) {
+				
+				appointment.setAppointmentPatient(appointmentPatient);
+				appointment.getAppointmentPatient().setMobileNumber(appointmentPayload.getMobileNumber());
+
+			} else {
+				appointmentPatient = new AppointmentPatient();
+				appointmentPatient.setFirstName(appointmentPayload.getPatientUuid());
+				appointmentPatient.setMobileNumber(appointmentPayload.getMobileNumber());
+				appointment.setAppointmentPatient(createPatient(appointmentPatient, appointmentPayload.getMobileNumber()));
+			}
+		} else {
+
+			appointmentPatient = new AppointmentPatient();
+			appointmentPatient.setFirstName(appointmentPayload.getPatientUuid());
+			appointmentPatient.setMobileNumber(appointmentPayload.getMobileNumber());
+			appointment.setAppointmentPatient(createPatient(appointmentPatient, appointmentPayload.getMobileNumber()));
+		}
+		AppointmentService appointmentService = appointmentServiceService
+				.getAppointmentServiceByUuid(appointmentPayload.getServiceUuid());
+		AppointmentServiceType appointmentServiceType = null;
+
+		appointmentServiceType = getServiceTypeByNameAndServiceId(appointmentService.getAppointmentServiceId());
+
+		appointment.setServiceType(appointmentServiceType);
+		appointment.setService(appointmentService);
+		appointment.setProvider(providerService.getProviderByUuid(appointmentPayload.getProviderUuid()));
+		appointment.setLocation(locationService.getLocationByUuid(appointmentPayload.getLocationUuid()));
+		appointment.setStartDateTime(appointmentPayload.getStartDateTime());
+		appointment.setEndDateTime(appointmentPayload.getEndDateTime());
+		appointment.setAppointmentKind(AppointmentKind.valueOf(appointmentPayload.getAppointmentKind()));
+		appointment.setComments(appointmentPayload.getComments());
+
+		return appointment;
+	}
+
+	private AppointmentServiceType getServiceTypeByUuid(Set<AppointmentServiceType> serviceTypes,
+			String serviceTypeUuid) {
+		return serviceTypes.stream().filter(avb -> avb.getUuid().equals(serviceTypeUuid)).findAny().get();
+	}
+
+	private AppointmentServiceType getServiceTypeByName(Set<AppointmentServiceType> serviceTypes,
+			String serviceTypeUuid) {
+		return serviceTypes.stream().filter(avb -> avb.getName().equals("Online Appointment")).findAny().get();
+	}
+
+	AppointmentServiceType getServiceTypeByNameAndServiceId(int ServiceId) {
+
+		AppointmentServiceType serviceType = phrAppointmentServiceService.getAppointmentServiceTypeByName(ServiceId,
+				"Online Appointment");
+
+		return serviceType;
+
+	}
+
+	String[] getnames(String name) {
 		String[] names = name.split(" ");
 		return names;
-   }
+	}
+
+	public AppointmentPatient createPatient(AppointmentPatient appointmentPatient, String mobileNumber) {
+		Map<String, String> nameMapping = getAppointmentPatientnames(appointmentPatient.getFirstName());
+		appointmentPatient.setFirstName(nameMapping.get("firstname"));
+		appointmentPatient.setLastName(nameMapping.get("lastname"));
+		return phrAppointmentServiceService.createPatient(appointmentPatient, mobileNumber);
+	}
+
+	Map<String, String> getAppointmentPatientnames(String name) {
+		Map<String, String> nameMap = new HashMap<String, String>();
+		String[] names = name.split(" ");
+		nameMap.put("firstname", names[0]);
+		nameMap.put("lastname", names[names.length - 1]);
+
+		return nameMap;
+	}
 
 }

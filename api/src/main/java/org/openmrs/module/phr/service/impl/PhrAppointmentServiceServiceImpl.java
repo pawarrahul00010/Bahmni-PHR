@@ -66,22 +66,9 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
     }
     
     @Override
-    public AppointmentPatient createPatient(String name) {
-    	AppointmentPatient patient = new AppointmentPatient();
-    	Map<String, String> nameMapping = getnames(name);
-    	patient.setFirstName(nameMapping.get("firstname"));
-    	patient.setLastName(nameMapping.get("lastname"));
-    	return phrAppointmentServiceDao.createPatient(patient);
-    }
-
-    Map<String, String> getnames(String name){
-    	Map<String, String> nameMap = new HashMap<String, String>();
-		String[] names = name.split(" ");
-		nameMap.put("firstname", names[0]);
-		nameMap.put("lastname", names[names.length-1]);
-		
-
-		return nameMap;
+    public AppointmentPatient createPatient(AppointmentPatient appointmentPatient, String mobileNumber) {
+    	
+    	return phrAppointmentServiceDao.createPatient(appointmentPatient, mobileNumber);
     }
 
     @Override

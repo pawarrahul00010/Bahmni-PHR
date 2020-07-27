@@ -10,6 +10,7 @@ public class AppointmentPayload {
     private String appointmentNumber;
     private String uuid;
     private String patientUuid;
+    private String mobileNumber;
     private String serviceUuid;
     private String serviceTypeUuid;
     private String providerUuid;
@@ -107,13 +108,21 @@ public class AppointmentPayload {
         this.comments = comments;
     }
 
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "AppointmentPayload [appointmentNumber=" + appointmentNumber + ", uuid=" + uuid + ", patientUuid="
-				+ patientUuid + ", serviceUuid=" + serviceUuid + ", serviceTypeUuid=" + serviceTypeUuid
-				+ ", providerUuid=" + providerUuid + ", locationUuid=" + locationUuid + ", startDateTime="
-				+ startDateTime + ", endDateTime=" + endDateTime + ", appointmentKind=" + appointmentKind
-				+ ", comments=" + comments + "]";
+				+ patientUuid + ", mobileNumber=" + mobileNumber + ", serviceUuid=" + serviceUuid + ", serviceTypeUuid="
+				+ serviceTypeUuid + ", providerUuid=" + providerUuid + ", locationUuid=" + locationUuid
+				+ ", startDateTime=" + startDateTime + ", endDateTime=" + endDateTime + ", appointmentKind="
+				+ appointmentKind + ", comments=" + comments + "]";
 	}
     
 }
