@@ -119,7 +119,7 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
 	    		+"\n"+format.format(a.getStartDateTime())
 	    		+"\n"+a.getService().getName();      
 	    	
-	    }else {
+	    }else if(flag.equals("create")){
 	    	if(a.getProvider()!=null)
 	    		return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
 	    		+"\n"+format.format(a.getStartDateTime())
@@ -127,6 +127,16 @@ public class PhrAppointmentServiceServiceImpl implements PhrAppointmentServiceSe
 	    		+"\n"+a.getProvider().getName();
 	    	else
 	    		return "Dear "+patientname+", your appointment has been successfully booked at Bahmni Hospital"
+	    		+"\n"+format.format(a.getStartDateTime())
+	    		+"\n"+a.getService().getName(); 
+	    }else {
+	    	if(a.getProvider()!=null)
+	    		return "Dear "+patientname+", your appointment has been cancelled at Bahmni Hospital"
+	    		+"\n"+format.format(a.getStartDateTime())
+	    		+"\n"+a.getService().getName()
+	    		+"\n"+a.getProvider().getName();
+	    	else
+	    		return "Dear "+patientname+", your appointment has been cancelled at Bahmni Hospital"
 	    		+"\n"+format.format(a.getStartDateTime())
 	    		+"\n"+a.getService().getName(); 
 	    }
