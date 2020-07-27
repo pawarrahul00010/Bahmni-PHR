@@ -65,8 +65,9 @@ public class PhrAppointmentController {
         	if(appointmentService == null){
                 throw new RuntimeException("Appointment Service does not exist");
             }
- 
+        	
             Appointment appointment = phrappointmentMapper.getAppointmentFromPayload(appointmentPayload);
+            
             String flag = "";
             if(appointmentPayload.getUuid() != null) {
             	flag = "update";

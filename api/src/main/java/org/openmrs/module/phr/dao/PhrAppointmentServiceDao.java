@@ -18,8 +18,9 @@ public interface PhrAppointmentServiceDao {
     
     public List<Appointment> getAllAppointments(Date forDate);
     
-    public AppointmentPatient createPatient(AppointmentPatient patient);
+    public AppointmentPatient createPatient(AppointmentPatient patient, String mobileNumber);
     
     public AppointmentPatient getAppointmentPatientByUuid(String uuid);
+    
 
 }

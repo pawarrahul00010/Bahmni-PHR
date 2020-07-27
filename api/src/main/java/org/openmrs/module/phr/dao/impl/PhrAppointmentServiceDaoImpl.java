@@ -88,9 +88,11 @@ public class PhrAppointmentServiceDaoImpl implements PhrAppointmentServiceDao{
 
     @Transactional
     @Override
-    public AppointmentPatient createPatient(AppointmentPatient patient) {
+    public AppointmentPatient createPatient(AppointmentPatient patient, String mobileNumber) {
+    	patient.setMobileNumber(mobileNumber);
         Session currentSession = sessionFactory.getCurrentSession();
-        currentSession.saveOrUpdate(patient);
+        currentSession.save(patient);
         return patient;
     }
+
 }

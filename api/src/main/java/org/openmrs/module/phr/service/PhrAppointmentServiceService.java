@@ -35,7 +35,7 @@ public interface PhrAppointmentServiceService {
     
     @Transactional
     @Authorized({"View Appointment Services"})
-    public AppointmentPatient createPatient(String name);
+    public AppointmentPatient createPatient(AppointmentPatient appointmentPatient,String mobileNumber);
     
     @Transactional
     @Authorized({"View Appointment Services"})
