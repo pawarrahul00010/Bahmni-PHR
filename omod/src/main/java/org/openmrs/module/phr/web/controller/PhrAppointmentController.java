@@ -92,7 +92,25 @@ public class PhrAppointmentController {
         }
 		 
         return appointmentMapper.constructResponse(appointments);
-    }  
+    }
+	
+    @RequestMapping(method = RequestMethod.POST, value="/{appointmentUuid}/changeStatus")
+    @ResponseBody
+    public ResponseEntity<Object> transitionAppointment(@PathVariable("appointmentUuid")String appointmentUuid, @RequestBody Map<String, String> statusDetails) throws ParseException {
+        try {
+            String toStatus = statusDetails.get("toStatus");
+            Date onDate = DateUtil.convertToLocalDateFromUTC(statusDetails.get("onDate"));
+            Appointment appointment = appointmentsService.getAppointmentByUuid(appointmentUuid);
+            if(appointment != null){
+                appointmentsService.changeStatus(appointment, toStatus, onDate);
+                phrAppointmentServiceService.sendMsg(appointment, "cancel");
+                return new ResponseEntity<>(appointmentMapper.constructResponse(appointment), HttpStatus.OK);
+            }else
+                throw new RuntimeException("Appointment does not exist");
+        }catch (RuntimeException e) {
+            return new ResponseEntity<>(RestUtil.wrapErrorResponse(e, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     
 }
