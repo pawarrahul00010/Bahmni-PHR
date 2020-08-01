@@ -155,7 +155,7 @@
 				<version>${jacocoVersion}</version>
 				<configuration>
 					<includes>
-						<include>org/openmrs/module/appointments/web/**</include>
+						<include>org/openmrs/module/phr/web/**</include>
 					</includes>
 				</configuration>
 				<executions>

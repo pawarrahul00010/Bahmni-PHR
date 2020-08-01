@@ -25,7 +25,7 @@
     
     <context:component-scan base-package="org.openmrs.module.phr"/>
     
-     <!-- <bean id="sessionFactory" class="org.openmrs.api.db.hibernate.HibernateSessionFactoryBean">
+        <bean id="sessionFactory" class="org.openmrs.api.db.hibernate.HibernateSessionFactoryBean">
         <property name="configLocations">
             <list>
                 <value>classpath:hibernate.cfg.xml</value>
@@ -34,9 +34,9 @@
         </property>
         <property name="mappingJarLocations">
             <ref bean="mappingJarResources"/>
-        </property> 
-         default properties must be set in the hibernate.default.properties
-    </bean> -->
+        </property>
+        <!--  default properties must be set in the hibernate.default.properties -->
+    </bean>
     
 
 	<bean id="administrationService" name="administrationService" class="org.openmrs.api.impl.AdministrationServiceImpl"/>
